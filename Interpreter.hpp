@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <vector>
+#include <map>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -24,6 +25,10 @@ namespace ColumbusCompiler
     std::string mDstFile;
 
     std::vector<C_Type> mTypes;
+    std::vector<std::string> mMarks;
+
+    std::map<int, std::string> mSyntax = { {0, "begin"}, {1, "end"}, {2, "mark"}, {3, "goto"},
+    {4, "clearall"}, {5, "setall"}, {6, "clear"}, {7, "set"} };
 
     bool load();
     bool getErrors();

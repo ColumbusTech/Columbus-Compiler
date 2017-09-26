@@ -16,6 +16,9 @@ namespace ColumbusCompiler
 
   bool C_Interpreter::load()
   {
+    if (mInited == false)
+      return false;
+
     std::ifstream file;
     file.open(mSrcFile);
 
@@ -82,6 +85,29 @@ namespace ColumbusCompiler
 
               mTypes.back().line += ' ' + mTypes.back().afterTypeS;
 
+              mMarks.push_back(mTypes.back().afterTypeS);
+
+              continue;
+            }
+          }
+
+          if (mTypes.back().type == 3)
+          {
+            if (mTypes.back().afterType == false)
+            {
+              mTypes.back().afterType = true;
+
+              if (line[line.size() - 1] == ';')
+              {
+                mTypes.back().endOperator = true;
+                mTypes.back().afterTypeS = line.substr(0, line.size() - 1);
+              } else
+              {
+                mTypes.back().afterTypeS = line;
+              }
+
+              mTypes.back().line += ' ' + mTypes.back().afterTypeS;
+
               continue;
             }
           }
@@ -125,11 +151,46 @@ namespace ColumbusCompiler
           case 1:
             C_Error("%s: %i: expected '.' `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
             break;
+          case 2:
+            C_Error("%s: %i: expected '.' `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+            break;
+          case 3:
+            C_Error("%s: %i: expected '.' `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+            break;
           default:
             C_Error("%s: %i: expected ';' `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
             break;
         }
         ret = false;
+      }
+
+
+      if (mTypes[i].afterTypeS.empty())
+      {
+        switch (mTypes[i].type)
+        {
+          case 0:
+            break;
+          case 1:
+            break;
+          case 2:
+            C_Error("%s: %i: expected [mark] `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+            ret = false;
+            break;
+          case 3:
+            C_Error("%s: %i: expected [mark] `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+            ret = false;
+            break;
+        }
+      }
+
+      if (mTypes[i].type == 3)
+      {
+        if (std::count(mMarks.begin(), mMarks.end(), mTypes[i].afterTypeS) == 0)
+        {
+          C_Error("%s: %i: undefined mark `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].afterTypeS.c_str());
+          ret = false;
+        }
       }
     }
 
@@ -154,22 +215,29 @@ namespace ColumbusCompiler
         case 0:
         {
           if (mTypes[i].afterType == false)
-            file << "org 0" << std::endl;
+            file << "org 0" << std::endl << std::endl;
 
           if (mTypes[i].afterType == true)
-            file << "org " << mTypes[i].afterTypeI << std::endl;
+            file << "org " << mTypes[i].afterTypeI << std::endl << std::endl;
 
           break;
         };
 
         case 1:
         {
-          file << "end." << std::endl;
+          file << std::endl << "end." << std::endl;
           break;
         };
 
         case 2:
         {
+          file << mTypes[i].afterTypeS << ':' << std::endl;
+          break;
+        };
+
+        case 3:
+        {
+          file << "goto " << mTypes[i].afterTypeS << std::endl;
           break;
         };
       }
@@ -197,14 +265,17 @@ namespace ColumbusCompiler
 
   int C_Interpreter::getType(std::string str)
   {
-    if (str.compare(0, 5, "begin") == 0)
+    if (str.compare(0, 5, mSyntax.find(0)->second) == 0)
       return 0;
 
-    if (str.compare(0, 3, "end") == 0)
+    if (str.compare(0, 3, mSyntax.find(1)->second) == 0)
       return 1;
 
-    if (str.compare(0, 4, "mark") == 0)
+    if (str.compare(0, 4, mSyntax.find(2)->second) == 0)
       return 2;
+
+    if (str.compare(0, 4, mSyntax.find(3)->second) == 0)
+      return 3;
 
     return -1;
   }
@@ -223,6 +294,9 @@ namespace ColumbusCompiler
         return str[str.size() - 1] == '.';
         break;
       case 2:
+        return str[str.size() - 1] == ';';
+        break;
+      case 3:
         return str[str.size() - 1] == ';';
         break;
       default:
