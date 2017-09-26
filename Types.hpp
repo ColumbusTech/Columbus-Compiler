@@ -10,8 +10,10 @@ namespace ColumbusCompiler
   //1 == end
   //2 == mark
   //3 == clearall
-  //4 == set
-  //5 == goto
+  //4 == setall
+  //5 == clear
+  //6 == set
+  //7 == goto
 
   struct C_Type
   {
