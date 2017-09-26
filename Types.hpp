@@ -9,11 +9,11 @@ namespace ColumbusCompiler
   //0 == begin
   //1 == end
   //2 == mark
-  //3 == clearall
-  //4 == setall
-  //5 == clear
-  //6 == set
-  //7 == goto
+  //3 == goto
+  //4 == clearall
+  //5 == setall
+  //6 == clear
+  //7 == set
 
   struct C_Type
   {

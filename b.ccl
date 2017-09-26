@@ -1,5 +1,7 @@
 begin 0:
 
-mark asd;
+mark BEGIN;
+
+goto BEGIN;
 
 end.
