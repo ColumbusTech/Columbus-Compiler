@@ -91,7 +91,7 @@ namespace ColumbusCompiler
             }
           }
 
-          if (mTypes.back().type == 3)
+          if (mTypes.back().type == 3 || mTypes.back().type == 4 || mTypes.back().type == 5)
           {
             if (mTypes.back().afterType == false)
             {
@@ -113,8 +113,16 @@ namespace ColumbusCompiler
           }
         }
 
+        bool endType = false;
+
+        if (line[line.size() - 1] == ':' || line[line.size() - 1] == ';' || line[line.size() - 1] == '.')
+          endType = true;
+
         C_Type type;
-        type.type = getType(line);
+        if (!endType)
+          type.type = getType(line);
+        else
+          type.type = getType(line.substr(0, line.size() - 1));
         type.str = i;
         type.line = line;
         type.endOperator = getEndOperator(type.type, line);
@@ -151,12 +159,6 @@ namespace ColumbusCompiler
           case 1:
             C_Error("%s: %i: expected '.' `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
             break;
-          case 2:
-            C_Error("%s: %i: expected '.' `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
-            break;
-          case 3:
-            C_Error("%s: %i: expected '.' `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
-            break;
           default:
             C_Error("%s: %i: expected ';' `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
             break;
@@ -179,6 +181,12 @@ namespace ColumbusCompiler
             break;
           case 3:
             C_Error("%s: %i: expected [mark] `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+            ret = false;
+          case 4:
+            C_Error("%s: %i: expected [port] `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+            ret = false;
+          case 5:
+            C_Error("%s: %i: expected [port] `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
             ret = false;
             break;
         }
@@ -222,22 +230,29 @@ namespace ColumbusCompiler
 
           break;
         };
-
         case 1:
         {
           file << std::endl << "end." << std::endl;
           break;
         };
-
         case 2:
         {
           file << mTypes[i].afterTypeS << ':' << std::endl;
           break;
         };
-
         case 3:
         {
           file << "goto " << mTypes[i].afterTypeS << std::endl;
+          break;
+        };
+        case 4:
+        {
+          file << "clrf " << mTypes[i].afterTypeS << std::endl;
+          break;
+        };
+        case 5:
+        {
+          file << "clrf " << mTypes[i].afterTypeS << std::endl;
           break;
         };
       }
@@ -265,17 +280,23 @@ namespace ColumbusCompiler
 
   int C_Interpreter::getType(std::string str)
   {
-    if (str.compare(0, 5, mSyntax.find(0)->second) == 0)
+    if (str.compare(mSyntax.find(0)->second) == 0)
       return 0;
 
-    if (str.compare(0, 3, mSyntax.find(1)->second) == 0)
+    if (str.compare(mSyntax.find(1)->second) == 0)
       return 1;
 
-    if (str.compare(0, 4, mSyntax.find(2)->second) == 0)
+    if (str.compare(mSyntax.find(2)->second) == 0)
       return 2;
 
-    if (str.compare(0, 4, mSyntax.find(3)->second) == 0)
+    if (str.compare(mSyntax.find(3)->second) == 0)
       return 3;
+
+    if (str.compare(mSyntax.find(4)->second) == 0)
+      return 4;
+
+    if (str.compare(mSyntax.find(5)->second) == 0)
+      return 5;
 
     return -1;
   }
@@ -297,6 +318,9 @@ namespace ColumbusCompiler
         return str[str.size() - 1] == ';';
         break;
       case 3:
+        return str[str.size() - 1] == ';';
+        break;
+      case 4:
         return str[str.size() - 1] == ';';
         break;
       default:

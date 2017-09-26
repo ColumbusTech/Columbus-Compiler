@@ -1,7 +1,9 @@
 begin 0:
+	mark BEGIN;
+		clearall PORTB;
+		clearall TRISB;
+		setall PORTB;
+	mark LOOP;
 
-mark BEGIN;
-
-goto BEGIN;
-
+	goto LOOP;
 end.

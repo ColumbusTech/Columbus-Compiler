@@ -1,6 +1,9 @@
 org 0
 
 BEGIN:
-goto BEGIN
+clrf PORTB
+clrf TRISB
+LOOP:
+goto LOOP
 
 end.
