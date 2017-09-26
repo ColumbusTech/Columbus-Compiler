@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 #include <Types.hpp>
 #include <Console.hpp>
 
@@ -27,6 +28,11 @@ namespace ColumbusCompiler
     bool load();
     bool getErrors();
     void save();
+
+    bool isStringNumber(std::string str);
+
+    int getType(std::string str);
+    bool getEndOperator(int type, std::string str);
   public:
     C_Interpreter(int argc, char** argv);
 

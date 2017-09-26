@@ -41,52 +41,38 @@ namespace ColumbusCompiler
         if (mTypes.size() > 0)
         {
           if (mTypes.back().type == 0)
+          {
             if (line[0] == ':')
+            {
               mTypes.back().endOperator = true;
+              mTypes.back().afterType = false;
+              mTypes.back().afterTypeI = 0;
+            } else if(isStringNumber(line) || isStringNumber(line.substr(0, line.size() - 1)))
+            {
+              mTypes.back().afterType = true;
+              mTypes.back().afterTypeI = atoi(line.c_str());
+
+              if (line[line.size() - 1] == ':')
+                mTypes.back().endOperator = true;
+
+              continue;
+            }
+          }
 
           if (mTypes.back().type == 1)
+          {
             if (line[0] == '.')
               mTypes.back().endOperator = true;
+          }
         }
 
-        if (line.compare(0, 5, "begin") == 0)
-        {
-          C_Type type;
-          type.type = 0;
-          type.str = i;
-          type.line = line;
+        C_Type type;
+        type.type = getType(line);
+        type.str = i;
+        type.line = line;
+        type.endOperator = getEndOperator(type.type, line);
 
-          if (line[line.size() - 1] == ':')
-            type.endOperator = true;
-
-          mTypes.push_back(type);
-        } else if (line.compare(0, 3, "end") == 0)
-        {
-          C_Type type;
-          type.type = 1;
-          type.str = i;
-          type.line = line;
-
-          if (line[line.size() - 1] == '.')
-            type.endOperator = true;
-
-          mTypes.push_back(type);
-        } else if (line.compare(0, 1, ":") != 0 || line.compare(0, 1, ".") != 0 || line.compare(0, 1, ";") != 1)
-        {
-          C_Type type;
-          type.type = -1;
-          type.str = i;
-          type.line = line;
-
-          if (line[line.size() - 1] == ':')
-            type.endOperator = true;
-          if (line[line.size() - 1] == '.')
-            type.endOperator = true;
-          if (line[line.size() - 1] == ';')
-            type.endOperator = true;
-
-          mTypes.push_back(type);
-        }
+        mTypes.push_back(type);
       }
     }
 
@@ -97,10 +83,13 @@ namespace ColumbusCompiler
 
   bool C_Interpreter::getErrors()
   {
+
     bool ret = true;
 
     for (size_t i = 0; i < mTypes.size(); i++)
     {
+      std::cout << mTypes[i].afterTypeI << std::endl;
+
       if (mTypes[i].type == -1)
       {
         C_Error("%s: %i: Unknown type `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
@@ -135,6 +124,42 @@ namespace ColumbusCompiler
 
     if (getErrors() == false)
       return;
+  }
+
+  bool C_Interpreter::isStringNumber(std::string str)
+  {
+    return !str.empty() && std::find_if(str.begin(),
+        str.end(), [](char c) { return !std::isdigit(c); }) == str.end();
+  }
+
+  int C_Interpreter::getType(std::string str)
+  {
+    if (str.compare(0, 5, "begin") == 0)
+      return 0;
+
+    if (str.compare(0, 3, "end") == 0)
+      return 1;
+
+    return -1;
+  }
+
+  bool C_Interpreter::getEndOperator(int type, std::string str)
+  {
+    switch(type)
+    {
+      case -1:
+        return (str[str.size() - 1] == ':') || (str[str.size() - 1] == '.') || (str[str.size() - 1] == ';');
+        break;
+      case 0:
+        return str[str.size() - 1] == ':';
+        break;
+      case 1:
+        return str[str.size() - 1] == '.';
+        break;
+      default:
+        return str[str.size() - 1] == ';';
+        break;
+    }
   }
 
   C_Interpreter::~C_Interpreter()

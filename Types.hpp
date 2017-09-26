@@ -20,7 +20,13 @@ namespace ColumbusCompiler
 
     std::string line;
 
-    bool endOperator;
+    bool afterType = false;
+
+    int afterTypeI = -10000;
+    int afterTypeH = 0x00;
+    std::string afterTypeS;
+
+    bool endOperator = false;
   };
 
 }
