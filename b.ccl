@@ -1,7 +1,15 @@
 begin 0:
-
-mark BEGIN;
-
-goto BEGIN;
-
+	mark BEGIN;
+		clearall PORTA;
+		clearall PORTB;
+		
+		set STATUS 5;
+		
+		clearall TRISA;
+		clearall TRISB;
+		
+		clear STATUS 5;
+	mark LOOP;
+		set PORTB 4;
+	goto LOOP;
 end.

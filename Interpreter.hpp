@@ -34,6 +34,8 @@ namespace ColumbusCompiler
     bool getErrors();
     void save();
 
+    bool getAfterTypes(std::string line);
+
     bool isStringNumber(std::string str);
 
     int getType(std::string str);
