@@ -43,74 +43,8 @@ namespace ColumbusCompiler
       {
         if (mTypes.size() > 0)
         {
-          if (mTypes.back().type == 0)
-          {
-            if (line[0] == ':')
-            {
-              mTypes.back().endOperator = true;
-              mTypes.back().afterType = false;
-              mTypes.back().afterTypeI = 0;
-            } else if(isStringNumber(line) || isStringNumber(line.substr(0, line.size() - 1)))
-            {
-              mTypes.back().afterType = true;
-              mTypes.back().afterTypeI = atoi(line.c_str());
-
-              if (line[line.size() - 1] == ':')
-                mTypes.back().endOperator = true;
-
-              continue;
-            }
-          }
-
-          if (mTypes.back().type == 1)
-          {
-            if (line[0] == '.')
-              mTypes.back().endOperator = true;
-          }
-
-          if (mTypes.back().type == 2)
-          {
-            if (mTypes.back().afterType == false)
-            {
-              mTypes.back().afterType = true;
-
-              if (line[line.size() - 1] == ';')
-              {
-                mTypes.back().endOperator = true;
-                mTypes.back().afterTypeS = line.substr(0, line.size() - 1);
-              } else
-              {
-                mTypes.back().afterTypeS = line;
-              }
-
-              mTypes.back().line += ' ' + mTypes.back().afterTypeS;
-
-              mMarks.push_back(mTypes.back().afterTypeS);
-
-              continue;
-            }
-          }
-
-          if (mTypes.back().type == 3 || mTypes.back().type == 4 || mTypes.back().type == 5)
-          {
-            if (mTypes.back().afterType == false)
-            {
-              mTypes.back().afterType = true;
-
-              if (line[line.size() - 1] == ';')
-              {
-                mTypes.back().endOperator = true;
-                mTypes.back().afterTypeS = line.substr(0, line.size() - 1);
-              } else
-              {
-                mTypes.back().afterTypeS = line;
-              }
-
-              mTypes.back().line += ' ' + mTypes.back().afterTypeS;
-
-              continue;
-            }
-          }
+          if (getAfterTypes(line))
+            continue;
         }
 
         bool endType = false;
@@ -166,6 +100,32 @@ namespace ColumbusCompiler
         ret = false;
       }
 
+      if (mTypes[i].afterTypeI == -10000)
+      {
+        switch (mTypes[i].type)
+        {
+          case 0:
+            break;
+          case 1:
+            break;
+          case 2:
+            break;
+          case 3:
+            break;
+          case 4:
+            break;
+          case 5:
+            break;
+          case 6:
+            C_Error("%s: %i: expected [port number] `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+            ret = false;
+            break;
+          case 7:
+            C_Error("%s: %i: expected [port number] `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+            ret = false;
+            break;
+        }
+      }
 
       if (mTypes[i].afterTypeS.empty())
       {
@@ -188,6 +148,12 @@ namespace ColumbusCompiler
           case 5:
             C_Error("%s: %i: expected [port] `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
             ret = false;
+            break;
+          case 6:
+            C_Error("%s: %i: expected [port] `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+            break;
+          case 7:
+            C_Error("%s: %i: expected [port] `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
             break;
         }
       }
@@ -232,7 +198,7 @@ namespace ColumbusCompiler
         };
         case 1:
         {
-          file << std::endl << "end." << std::endl;
+          file << std::endl << "end" << std::endl;
           break;
         };
         case 2:
@@ -252,7 +218,18 @@ namespace ColumbusCompiler
         };
         case 5:
         {
-          file << "clrf " << mTypes[i].afterTypeS << std::endl;
+          file << "movlw 0xff" << std::endl;
+          file << "movwf " << mTypes[i].afterTypeS << std::endl;
+          break;
+        };
+        case 6:
+        {
+          file << "bcf " << mTypes[i].afterTypeS << ", " << mTypes[i].afterTypeI << std::endl;
+          break;
+        };
+        case 7:
+        {
+          file << "bsf " << mTypes[i].afterTypeS << ", " << mTypes[i].afterTypeI << std::endl;
           break;
         };
       }
@@ -270,6 +247,122 @@ namespace ColumbusCompiler
       return;
 
     save();
+  }
+
+  bool C_Interpreter::getAfterTypes(std::string line)
+  {
+    ////////////////////////////////////////////
+    if (mTypes.back().type == 0)
+    {
+      if (line[0] == ':')
+      {
+        mTypes.back().endOperator = true;
+        mTypes.back().afterType = false;
+        mTypes.back().afterTypeI = 0;
+
+        return true;
+      } else if(isStringNumber(line) || isStringNumber(line.substr(0, line.size() - 1)))
+      {
+        mTypes.back().afterType = true;
+        mTypes.back().afterTypeI = atoi(line.c_str());
+
+        if (line[line.size() - 1] == ':')
+          mTypes.back().endOperator = true;
+
+        return true;
+      }
+    }
+    ////////////////////////////////////////////
+    if (mTypes.back().type == 1)
+    {
+      if (line[0] == '.')
+      {
+        mTypes.back().endOperator = true;
+        return true;
+      }
+    }
+    ////////////////////////////////////////////
+    if (mTypes.back().type == 2)
+    {
+      if (line[0] == ';')
+      {
+        mTypes.back().endOperator = true;
+          return true;
+      }
+
+      if (mTypes.back().afterType == false)
+      {
+        mTypes.back().afterType = true;
+
+        if (line[line.size() - 1] == ';')
+        {
+          mTypes.back().endOperator = true;
+          mTypes.back().afterTypeS = line.substr(0, line.size() - 1);
+        } else
+        {
+          mTypes.back().afterTypeS = line;
+        }
+
+        mTypes.back().line += ' ' + mTypes.back().afterTypeS;
+
+        mMarks.push_back(mTypes.back().afterTypeS);
+
+        return true;
+      }
+    }
+    ////////////////////////////////////////////
+    if (mTypes.back().type == 3 || mTypes.back().type == 4 || mTypes.back().type == 5)
+    {
+      if (line[0] == ';')
+      {
+        mTypes.back().endOperator = true;
+          return true;
+      }
+
+      if (mTypes.back().afterType == false)
+      {
+        mTypes.back().afterType = true;
+
+        if (line[line.size() - 1] == ';')
+        {
+          mTypes.back().endOperator = true;
+          mTypes.back().afterTypeS = line.substr(0, line.size() - 1);
+        } else
+        {
+          mTypes.back().afterTypeS = line;
+        }
+
+        mTypes.back().line += ' ' + mTypes.back().afterTypeS;
+
+        return true;
+      }
+    }
+    ////////////////////////////////////////////
+    if (mTypes.back().type == 6 || mTypes.back().type == 7)
+    {
+      if (mTypes.back().afterTypeI == -10000)
+      {
+        if (line[line.size() - 1] == ';')
+        {
+          mTypes.back().endOperator = true;
+          if (isStringNumber(line.substr(0, line.size() - 1)))
+            mTypes.back().afterTypeI = atoi(line.substr(0, line.size() - 1).c_str());
+          else
+            mTypes.back().afterTypeS = line.substr(0, line.size() - 1);
+        } else
+        {
+          if (isStringNumber(line))
+            mTypes.back().afterTypeI = atoi(line.c_str());
+          else
+            mTypes.back().afterTypeS = line;
+        }
+
+        return true;
+      }
+    }
+    ////////////////////////////////////////////
+
+    return false;
   }
 
   bool C_Interpreter::isStringNumber(std::string str)
@@ -297,6 +390,12 @@ namespace ColumbusCompiler
 
     if (str.compare(mSyntax.find(5)->second) == 0)
       return 5;
+
+    if (str.compare(mSyntax.find(6)->second) == 0)
+      return 6;
+
+    if (str.compare(mSyntax.find(7)->second) == 0)
+      return 7;
 
     return -1;
   }
