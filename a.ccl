@@ -1,8 +1,0 @@
-begin 0:
-	mark BEGIN;
-		clearall PORTB;
-		clearall TRISB;
-	mark LOOP;
-		set PORTB(4);
-		goto LOOP;
-end.
