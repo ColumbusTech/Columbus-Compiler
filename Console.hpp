@@ -1,34 +1,34 @@
 /************************************************
-*                   Console.h                   *
+*                  Console.hpp                  *
 *************************************************
 *          This file is a part of:              *
-*               COLUMBUS ENGINE                 *
+*               COLUMBUS COMPILER               *
 *************************************************
 *             Nikolay(Columbus) Red             *
-*                   21.07.2017                  *
+*                   17.10.2017                  *
 *************************************************/
 
 #pragma once
 
-#include <cstdio>
+#include <iostream>
+#include <string>
 #include <cstdlib>
-#include <cstdarg>
 
 #include <System.hpp>
 
 namespace ColumbusCompiler
 {
 
-  void C_Info(const char* fmt, ...);
+  void C_Info(std::string aMessage);
 
-  void C_Warning(const char* fmt, ...);
+  void C_Warning(std::string aMessage);
 
-  void C_Error(const char* fmt, ...);
+  void C_Error(std::string aMessage);
 
-  void C_FatalError(const char* fmt, ...);
+  void C_FatalError(std::string aMessage);
 
-  void C_Success(const char* fmt, ...);
+  void C_Success(std::string aMessage);
 
-  void C_Initialization(const char* fmt, ...);
+  void C_Initialization(std::string aMessage);
 
 }

@@ -1,11 +1,11 @@
 /************************************************
-*                  Console.cpp                  *
+*                  Console.hpp                  *
 *************************************************
 *          This file is a part of:              *
-*               COLUMBUS ENGINE                 *
+*               COLUMBUS COMPILER               *
 *************************************************
 *             Nikolay(Columbus) Red             *
-*                   21.07.2017                  *
+*                   17.10.2017                  *
 *************************************************/
 
 #include <Console.hpp>
@@ -13,618 +13,73 @@
 namespace ColumbusCompiler
 {
 
-//////////////////////////////////////////////////////////////////////////////
-  void C_Info(const char* fmt, ...)
+  //////////////////////////////////////////////////////////////////////////////
+  void C_Info(std::string aMessage)
   {
-    va_list arglist;
-    va_start(arglist, fmt);
-    register int i;
+    std::string colinf = "\x1b[37;1m[INFO]:\x1b[0m ";
+    std::string colmes = "\x1b[37;1m" + aMessage + "\x1b[0m";
 
-    bool win = false;
     if (C_GetSystem() == "Win32" || C_GetSystem() == "Win64")
-      win = true;
-
-    if (!win)
-      printf("\x1b[37;1m[Info]: \x1b[0m");
+      std::cout << "[INFO]: " << aMessage << std::endl;
     else
-      printf("[Info]: ");
-
-    for(int i = 0; fmt[i]; i++)
-    {
-      if(fmt[i] == '%')
-      {
-        i++;
-        switch(fmt[i])
-        {
-          case 'i':
-          {
-            int i = va_arg(arglist, int);
-            if (!win)
-              printf("\x1b[37;1m%i\x1b[0m", i);
-            else
-              printf("%i", i);
-            break;
-          }
-
-          case 'd':
-          {
-            int i = va_arg(arglist, int);
-            if (!win)
-              printf("\x1b[37;1m%i\x1b[0m", i);
-            else
-              printf("%i", i);
-            break;
-          }
-
-          case 'c':
-          {
-            char c = va_arg(arglist, int);
-            if (!win)
-              printf("\x1b[37;1m%c\x1b[0m", c);
-            else
-              printf("%c", c);
-            break;
-          }
-
-          case 'p':
-          {
-            void* p = va_arg(arglist, void*);
-            if (!win)
-              printf("\x1b[37;1m%p\x1b[0m", p);
-            else
-              printf("%p", p);
-            break;
-          }
-
-          case 'f':
-          {
-            float f = va_arg(arglist, double);
-            if (!win)
-              printf("\x1b[37;1m%f\x1b[0m", f);
-            else
-              printf("%f", f);
-            break;
-          }
-
-          case 's':
-          {
-            char* s = va_arg(arglist, char*);
-            if (!win)
-              printf("\x1b[37;1m%s\x1b[0m", s);
-            else
-              printf("%s", s);
-            break;
-          }
-
-          default:
-          {
-            if (!win)
-              printf("\x1b[37;1m%c\x1b[0m", fmt[i]);
-            else
-              printf("%c", fmt[i]);
-            break;
-          }
-        }
-      } else
-      {
-        if (!win)
-          printf("\x1b[37;1m%c\x1b[0m", fmt[i]);
-        else
-          printf("%c", fmt[i]);
-      }
-    }
-    printf("\n");
+      std::cout << colinf << colmes << std::endl;
   }
   //////////////////////////////////////////////////////////////////////////////
-  void C_Warning(const char* fmt, ...)
+  void C_Warning(std::string aMessage)
   {
-    va_list arglist;
-    va_start(arglist, fmt);
-    register int i;
+    std::string colwar = "\x1b[33;1m[WARNING]:\x1b[0m ";
+    std::string colmes = "\x1b[37;1m" + aMessage + "\x1b[0m";
 
-    bool win = false;
     if (C_GetSystem() == "Win32" || C_GetSystem() == "Win64")
-      win = true;
-
-    if (!win)
-      printf("\x1b[33;1m[Warning]: \x1b[0m");
+      std::cout << "[WARNING] " << aMessage << std::endl;
     else
-      printf("[Warning]: ");
-
-    for(int i = 0; fmt[i]; i++)
-    {
-      if(fmt[i] == '%')
-      {
-        i++;
-        switch(fmt[i])
-        {
-          case 'i':
-          {
-            int i = va_arg(arglist, int);
-            if (!win)
-              printf("\x1b[37;1m%i\x1b[0m", i);
-            else
-              printf("%i", i);
-            break;
-          }
-
-          case 'd':
-          {
-            int i = va_arg(arglist, int);
-            if (!win)
-              printf("\x1b[37;1m%i\x1b[0m", i);
-            else
-              printf("%i", i);
-            break;
-          }
-
-          case 'c':
-          {
-            char c = va_arg(arglist, int);
-            if (!win)
-              printf("\x1b[37;1m%c\x1b[0m", c);
-            else
-              printf("%c", c);
-            break;
-          }
-
-          case 'p':
-          {
-            void* p = va_arg(arglist, void*);
-            if (!win)
-              printf("\x1b[37;1m%p\x1b[0m", p);
-            else
-              printf("%p", p);
-            break;
-          }
-
-          case 'f':
-          {
-            float f = va_arg(arglist, double);
-            if (!win)
-              printf("\x1b[37;1m%f\x1b[0m", f);
-            else
-              printf("%f", f);
-            break;
-          }
-
-          case 's':
-          {
-            char* s = va_arg(arglist, char*);
-            if (!win)
-              printf("\x1b[37;1m%s\x1b[0m", s);
-            else
-              printf("%s", s);
-            break;
-          }
-
-          default:
-          {
-            if (!win)
-              printf("\x1b[37;1m%c\x1b[0m", fmt[i]);
-            else
-              printf("%c", fmt[i]);
-            break;
-          }
-        }
-      } else
-      {
-        if (!win)
-          printf("\x1b[37;1m%c\x1b[0m", fmt[i]);
-        else
-          printf("%c", fmt[i]);
-      }
-    }
-    printf("\n");
+      std::cout << colwar << colmes << std::endl;
   }
   //////////////////////////////////////////////////////////////////////////////
-  void C_Error(const char* fmt, ...)
+  void C_Error(std::string aMessage)
   {
-    va_list arglist;
-    va_start(arglist, fmt);
-    register int i;
+    std::string colerr = "\x1b[31;1m[ERROR]:\x1b[0m ";
+    std::string colmes = "\x1b[37;1m" + aMessage + "\x1b[0m";
 
-    bool win = false;
     if (C_GetSystem() == "Win32" || C_GetSystem() == "Win64")
-      win = true;
-
-    if (!win)
-      printf("\x1b[31;1m[Error]: \x1b[0m");
+      std::cout << "[ERROR] " << aMessage << std::endl;
     else
-      printf("[Error]: ");
-
-    for(int i = 0; fmt[i]; i++)
-    {
-      if(fmt[i] == '%')
-      {
-        i++;
-        switch(fmt[i])
-        {
-          case 'i':
-          {
-            int i = va_arg(arglist, int);
-            if (!win)
-              printf("\x1b[37;1m%i\x1b[0m", i);
-            else
-              printf("%i", i);
-            break;
-          }
-
-          case 'd':
-          {
-            int i = va_arg(arglist, int);
-            if (!win)
-              printf("\x1b[37;1m%i\x1b[0m", i);
-            else
-              printf("%i", i);
-            break;
-          }
-
-          case 'c':
-          {
-            char c = va_arg(arglist, int);
-            if (!win)
-              printf("\x1b[37;1m%c\x1b[0m", c);
-            else
-              printf("%c", c);
-            break;
-          }
-
-          case 'p':
-          {
-            void* p = va_arg(arglist, void*);
-            if (!win)
-              printf("\x1b[37;1m%p\x1b[0m", p);
-            else
-              printf("%p", p);
-            break;
-          }
-
-          case 'f':
-          {
-            float f = va_arg(arglist, double);
-            if (!win)
-              printf("\x1b[37;1m%f\x1b[0m", f);
-            else
-              printf("%f", f);
-            break;
-          }
-
-          case 's':
-          {
-            char* s = va_arg(arglist, char*);
-            if (!win)
-              printf("\x1b[37;1m%s\x1b[0m", s);
-            else
-              printf("%s", s);
-            break;
-          }
-
-          default:
-          {
-            if (!win)
-              printf("\x1b[37;1m%c\x1b[0m", fmt[i]);
-            else
-              printf("%c", fmt[i]);
-            break;
-          }
-        }
-      } else
-      {
-        if (!win)
-          printf("\x1b[37;1m%c\x1b[0m", fmt[i]);
-        else
-          printf("%c", fmt[i]);
-      }
-    }
-    printf("\n");
+      std::cout << colerr << colmes << std::endl;
   }
   //////////////////////////////////////////////////////////////////////////////
-  void C_FatalError(const char* fmt, ...)
+  void C_FatalError(std::string aMessage)
   {
-    va_list arglist;
-    va_start(arglist, fmt);
-    register int i;
+    std::string colfer = "\x1b[35;1m[FATAL ERROR]:\x1b[0m ";
+    std::string colmes = "\x1b[37;1m" + aMessage + "\x1b[0m";
 
-    bool win = false;
     if (C_GetSystem() == "Win32" || C_GetSystem() == "Win64")
-      win = true;
-
-    if (!win)
-      printf("\x1b[35;1m[Fatal Error]: \x1b[0m");
+      std::cout << "[FATAL ERROR] " << aMessage << std::endl;
     else
-      printf("[Fatal Error]: ");
+      std::cout << colfer << colmes << std::endl;
 
-    for(int i = 0; fmt[i]; i++)
-    {
-      if(fmt[i] == '%')
-      {
-        i++;
-        switch(fmt[i])
-        {
-          case 'i':
-          {
-            int i = va_arg(arglist, int);
-            if (!win)
-              printf("\x1b[37;1m%i\x1b[0m", i);
-            else
-              printf("%i", i);
-            break;
-          }
-
-          case 'd':
-          {
-            int i = va_arg(arglist, int);
-            if (!win)
-              printf("\x1b[37;1m%i\x1b[0m", i);
-            else
-              printf("%i", i);
-            break;
-          }
-
-          case 'c':
-          {
-            char c = va_arg(arglist, int);
-            if (!win)
-              printf("\x1b[37;1m%c\x1b[0m", c);
-            else
-              printf("%c", c);
-            break;
-          }
-
-          case 'p':
-          {
-            void* p = va_arg(arglist, void*);
-            if (!win)
-              printf("\x1b[37;1m%p\x1b[0m", p);
-            else
-              printf("%p", p);
-            break;
-          }
-
-          case 'f':
-          {
-            float f = va_arg(arglist, double);
-            if (!win)
-              printf("\x1b[37;1m%f\x1b[0m", f);
-            else
-              printf("%f", f);
-            break;
-          }
-
-          case 's':
-          {
-            char* s = va_arg(arglist, char*);
-            if (!win)
-              printf("\x1b[37;1m%s\x1b[0m", s);
-            else
-              printf("%s", s);
-            break;
-          }
-
-          default:
-          {
-            if (!win)
-              printf("\x1b[37;1m%c\x1b[0m", fmt[i]);
-            else
-              printf("%c", fmt[i]);
-            break;
-          }
-        }
-      } else
-      {
-        if (!win)
-          printf("\x1b[37;1m%c\x1b[0m", fmt[i]);
-        else
-          printf("%c", fmt[i]);
-      }
-    }
-    printf("\n");
     exit(1);
   }
   //////////////////////////////////////////////////////////////////////////////
-  void C_Success(const char* fmt, ...)
+  void C_Success(std::string aMessage)
   {
-    va_list arglist;
-    va_start(arglist, fmt);
-    register int i;
+    std::string colsuc = "\x1b[32;1m[SUCCESS]:\x1b[0m ";
+    std::string colmes = "\x1b[37;1m" + aMessage + "\x1b[0m";
 
-    bool win = false;
     if (C_GetSystem() == "Win32" || C_GetSystem() == "Win64")
-      win = true;
-
-    if (!win)
-      printf("\x1b[32;1m[Success]: \x1b[0m");
+      std::cout << "[SUCCESS] " << aMessage << std::endl;
     else
-      printf("[Success]: ");
-
-    for(int i = 0; fmt[i]; i++)
-    {
-      if(fmt[i] == '%')
-      {
-        i++;
-        switch(fmt[i])
-        {
-          case 'i':
-          {
-            int i = va_arg(arglist, int);
-            if (!win)
-              printf("\x1b[37;1m%i\x1b[0m", i);
-            else
-              printf("%i", i);
-            break;
-          }
-
-          case 'd':
-          {
-            int i = va_arg(arglist, int);
-            if (!win)
-              printf("\x1b[37;1m%i\x1b[0m", i);
-            else
-              printf("%i", i);
-            break;
-          }
-
-          case 'c':
-          {
-            char c = va_arg(arglist, int);
-            if (!win)
-              printf("\x1b[37;1m%c\x1b[0m", c);
-            else
-              printf("%c", c);
-            break;
-          }
-
-          case 'p':
-          {
-            void* p = va_arg(arglist, void*);
-            if (!win)
-              printf("\x1b[37;1m%p\x1b[0m", p);
-            else
-              printf("%p", p);
-            break;
-          }
-
-          case 'f':
-          {
-            float f = va_arg(arglist, double);
-            if (!win)
-              printf("\x1b[37;1m%f\x1b[0m", f);
-            else
-              printf("%f", f);
-            break;
-          }
-
-          case 's':
-          {
-            char* s = va_arg(arglist, char*);
-            if (!win)
-              printf("\x1b[37;1m%s\x1b[0m", s);
-            else
-              printf("%s", s);
-            break;
-          }
-
-          default:
-          {
-            if (!win)
-              printf("\x1b[37;1m%c\x1b[0m", fmt[i]);
-            else
-              printf("%c", fmt[i]);
-            break;
-          }
-        }
-      } else
-      {
-        if (!win)
-          printf("\x1b[37;1m%c\x1b[0m", fmt[i]);
-        else
-          printf("%c", fmt[i]);
-      }
-    }
-    printf("\n");
+      std::cout << colsuc << colmes << std::endl;
   }
   //////////////////////////////////////////////////////////////////////////////
-  void C_Initialization(const char* fmt, ...)
+  void C_Initialization(std::string aMessage)
   {
-    va_list arglist;
-    va_start(arglist, fmt);
-    register int i;
+    std::string colini = "\x1b[36;1m[INITIALIZATION]:\x1b[0m ";
+    std::string colmes = "\x1b[37;1m" + aMessage + "\x1b[0m";
 
-    bool win = false;
     if (C_GetSystem() == "Win32" || C_GetSystem() == "Win64")
-      win = true;
-
-    if (!win)
-      printf("\x1b[36;1m[Initialization]: \x1b[0m");
+      std::cout << "[INITIALIZATION] " << aMessage << std::endl;
     else
-      printf("[Initialization]: ");
-
-    for(int i = 0; fmt[i]; i++)
-    {
-      if(fmt[i] == '%')
-      {
-        i++;
-        switch(fmt[i])
-        {
-          case 'i':
-          {
-            int i = va_arg(arglist, int);
-            if (!win)
-              printf("\x1b[37;1m%i\x1b[0m", i);
-            else
-              printf("%i", i);
-            break;
-          }
-
-          case 'd':
-          {
-            int i = va_arg(arglist, int);
-            if (!win)
-              printf("\x1b[37;1m%i\x1b[0m", i);
-            else
-              printf("%i", i);
-            break;
-          }
-
-          case 'c':
-          {
-            char c = va_arg(arglist, int);
-            if (!win)
-              printf("\x1b[37;1m%c\x1b[0m", c);
-            else
-              printf("%c", c);
-            break;
-          }
-
-          case 'p':
-          {
-            void* p = va_arg(arglist, void*);
-            if (!win)
-              printf("\x1b[37;1m%p\x1b[0m", p);
-            else
-              printf("%p", p);
-          break;
-          }
-
-          case 'f':
-          {
-            float f = va_arg(arglist, double);
-            if (!win)
-              printf("\x1b[37;1m%f\x1b[0m", f);
-            else
-              printf("%f", f);
-            break;
-          }
-
-          case 's':
-          {
-            char* s = va_arg(arglist, char*);
-            if (!win)
-              printf("\x1b[37;1m%s\x1b[0m", s);
-            else
-              printf("%s", s);
-            break;
-          }
-
-          default:
-          {
-            if (!win)
-              printf("\x1b[37;1m%c\x1b[0m", fmt[i]);
-            else
-              printf("%c", fmt[i]);
-            break;
-          }
-        }
-      } else
-      {
-        if (!win)
-          printf("\x1b[37;1m%c\x1b[0m", fmt[i]);
-        else
-          printf("%c", fmt[i]);
-      }
-    }
-    printf("\n");
+      std::cout << colini << colmes << std::endl;
   }
 
 }

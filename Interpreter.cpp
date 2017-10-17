@@ -77,9 +77,12 @@ namespace ColumbusCompiler
 
     for (size_t i = 0; i < mTypes.size(); i++)
     {
+      std::string str = std::to_string(mTypes[i].str);
+      std::string line = "`" + mTypes[i].line + "`";
+
       if (mTypes[i].type == -1)
       {
-        C_Error("%s: %i: Unknown type `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+        C_Error(mSrcFile + ": " + str + ": " + "Unknown type " + line);
         ret = false;
       }
 
@@ -88,13 +91,13 @@ namespace ColumbusCompiler
         switch (mTypes[i].type)
         {
           case 0:
-            C_Error("%s: %i: expected ':' `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+            C_Error(mSrcFile + ": " + str + ": " + "expected ':' " + line);
             break;
           case 1:
-            C_Error("%s: %i: expected '.' `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+            C_Error(mSrcFile + ": " + str + ": " + "expected '.' " + line);
             break;
           default:
-            C_Error("%s: %i: expected ';' `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+            C_Error(mSrcFile + ": " + str + ": " + "expected ';' " + line);
             break;
         }
         ret = false;
@@ -117,11 +120,11 @@ namespace ColumbusCompiler
           case 5:
             break;
           case 6:
-            C_Error("%s: %i: expected [port number] `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+            C_Error(mSrcFile + ": " + str + ": " + "expected [port number] " + line);
             ret = false;
             break;
           case 7:
-            C_Error("%s: %i: expected [port number] `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+            C_Error(mSrcFile + ": " + str + ": " + "expected [port number] " + line);
             ret = false;
             break;
         }
@@ -136,24 +139,24 @@ namespace ColumbusCompiler
           case 1:
             break;
           case 2:
-            C_Error("%s: %i: expected [mark] `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+            C_Error(mSrcFile + ": " + str + ": " + "expected [mark] " + line);
             ret = false;
             break;
           case 3:
-            C_Error("%s: %i: expected [mark] `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+            C_Error(mSrcFile + ": " + str + ": " + "expected [mark] " + line);
             ret = false;
           case 4:
-            C_Error("%s: %i: expected [port] `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+            C_Error(mSrcFile + ": " + str + ": " + "expected [mark] " + line);
             ret = false;
           case 5:
-            C_Error("%s: %i: expected [port] `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+            C_Error(mSrcFile + ": " + str + ": " + "expected [mark] " + line);
             ret = false;
             break;
           case 6:
-            C_Error("%s: %i: expected [port] `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+            C_Error(mSrcFile + ": " + str + ": " + "expected [mark] " + line);
             break;
           case 7:
-            C_Error("%s: %i: expected [port] `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].line.c_str());
+            C_Error(mSrcFile + ": " + str + ": " + "expected [mark] " + line);
             break;
         }
       }
@@ -162,7 +165,7 @@ namespace ColumbusCompiler
       {
         if (std::count(mMarks.begin(), mMarks.end(), mTypes[i].afterTypeS) == 0)
         {
-          C_Error("%s: %i: undefined mark `%s`", mSrcFile.c_str(), mTypes[i].str, mTypes[i].afterTypeS.c_str());
+          C_Error(mSrcFile + ": " + str + ": " + "undefined mark " + line);
           ret = false;
         }
       }
